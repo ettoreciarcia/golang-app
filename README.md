@@ -1,3 +1,3 @@
-# Golang app
+# Golang-app
 
-A sample app written in go to test Kubernetes Resource
+A sample app to test Kubernetes Resource

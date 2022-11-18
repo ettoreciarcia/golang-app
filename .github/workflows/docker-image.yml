@@ -1,0 +1,53 @@
+ name: Docker Build
+on:  
+  push:    
+    branches: [ main ]  
+jobs:   
+
+  build-multiarch-dockerfile:
+    name: Build multi-architecture image 
+    env:
+      IMAGE_NAME: golang-app
+      #DOCKER_REGISTRY: quay.io 
+      DOCKER_IMAGE: hecha00/golang-app:latest 
+      DOCKER_TARGET_PLATFORM: linux/arm/v7                 
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [ amd64, arm64 ]
+
+    steps:    
+    - name: Checkout the code       
+      uses: actions/checkout@v1          
+
+    - name: Log in to docker hub
+      uses: redhat-actions/podman-login@v1
+      with:
+        username: hecha00
+        password: ${DOCKER_HUB_PASSWORD}
+        #registry: $\{\{ env.DOCKER_REGISTRY \}\}
+
+    - name: Install qemu dependency
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y qemu-user-static
+    - name: Buildah Action
+      uses: redhat-actions/buildah-build@v2
+      with:
+        image: ${DOCKER_IMAGE}
+        tags: latest
+        arch: ${matrix.arch}
+        build-args: ARCH=${matrix.arch}
+        containerfiles: |
+          ./Dockerfile
+    - name: Push To Docker Hub
+      id: push-to-docker-hub
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${IMAGE_NAME}
+        tags: latest
+        registry: hecha00        
+
+    - name: Print image url
+      run: echo "Image pushed to ${{ steps.push-to-quay.outputs.registry-paths }}"

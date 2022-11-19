@@ -4,11 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
 )
 
 func main() {
+
 	PORT := getEnv("PORT", "8080")
 	http.HandleFunc("/", handler)
 	log.Fatal(http.ListenAndServe(":"+PORT, nil))
@@ -23,6 +27,11 @@ func getEnv(key, fallback string) string {
 	return value
 }
 
+func getRandomValue(rangeLower int, rangeUpper int) int {
+	rand.Seed(time.Now().Unix())
+	return rand.Intn(rangeUpper-rangeLower) + rangeLower
+}
+
 func getHostname() string {
 	hostname, err := os.Hostname()
 	if err != nil {
@@ -35,12 +44,12 @@ func getHostname() string {
 func handler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	hostname := getHostname()
 
 	resp := make(map[string]string)
 	resp["message"] = "Status Created"
-	resp["hostname"] = hostname
+	resp["hostname"] = getHostname()
 	resp["version"] = getEnv("VERSION", "1")
+	resp["value"] = strconv.Itoa(getRandomValue(1, 100))
 	jsonResp, err := json.MarshalIndent(resp, "", "    ")
 	if err != nil {
 		log.Fatalf("Error happened in JSON marshal. Err: %s", err)

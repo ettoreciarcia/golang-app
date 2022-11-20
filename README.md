@@ -13,6 +13,7 @@ Example of response
 {
     "hostname": "170e800c2068",
     "message": "Status Created",
+    "value": "71",
     "version": "1"
 }
 ```

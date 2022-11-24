@@ -12,10 +12,13 @@ import (
 )
 
 func main() {
-
 	PORT := getEnv("PORT", "8080")
 	http.HandleFunc("/", handler)
 	log.Fatal(http.ListenAndServe(":"+PORT, nil))
+}
+
+func logging() {
+
 }
 
 // Check to verify if a env variables exists, if it doesn't it return a default value
@@ -51,9 +54,23 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	resp["version"] = getEnv("VERSION", "1")
 	resp["value"] = strconv.Itoa(getRandomValue(1, 100))
 	jsonResp, err := json.MarshalIndent(resp, "", "    ")
+
+	//log request on a file
+	f, err := os.OpenFile("logs.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		log.Fatalf("Error happened in JSON marshal. Err: %s", err)
+		log.Fatalf("error opening file: %v", err)
 	}
+	defer f.Close()
+
+	//File as standard output
+	log.SetOutput(f)
+	log.Printf(
+		"%s\t\t%s\t\t%s\t",
+		r.Method,
+		r.RequestURI,
+		r.RemoteAddr,
+	)
+
 	w.Write(jsonResp)
 
 }

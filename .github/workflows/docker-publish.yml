@@ -27,4 +27,4 @@ jobs:
         with:
           push: true
           tags: hecha00/golang-app:latest
-          platforms: linux/amd64,linux/arm64,linux/ppc64le
+          platforms: linux/amd64,linux/arm64

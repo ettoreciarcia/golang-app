@@ -49,10 +49,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 
 	resp := make(map[string]string)
-	resp["message"] = "Status Created"
 	resp["hostname"] = getHostname()
 	resp["version"] = getEnv("VERSION", "1")
 	resp["value"] = strconv.Itoa(getRandomValue(1, 100))
+	resp["remoteAddr"] = r.RemoteAddr
 	jsonResp, err := json.MarshalIndent(resp, "", "    ")
 
 	//log request on a file

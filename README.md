@@ -11,11 +11,11 @@ Example of response
 
 ```json
 {
-    "hostname": "170e800c2068",
-    "message": "Status Created",
-    "value": "71",
+    "hostname": "hecha",
+    "remoteAddr": "127.0.0.1:53961",
+    "value": "5",
     "version": "1"
-}
+}%
 ```
 
 You can find the image at [hecha00/golang-app](https://hub.docker.com/repository/docker/hecha00/golang-app)

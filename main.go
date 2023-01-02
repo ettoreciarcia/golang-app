@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	PORT := getEnv("PORT", "8080")
+	PORT := getEnv("PORT", "3000")
 	http.HandleFunc("/", handler)
 	log.Fatal(http.ListenAndServe(":"+PORT, nil))
 }
@@ -47,6 +47,14 @@ func getHostname() string {
 func handler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
+
+	// Loop over header names
+	for name, values := range r.Header {
+		// Loop over all values for the name.
+		for _, value := range values {
+			fmt.Println(name, value)
+		}
+	}
 
 	resp := make(map[string]string)
 	resp["hostname"] = getHostname()
